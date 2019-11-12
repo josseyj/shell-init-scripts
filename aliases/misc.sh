@@ -1,0 +1,2 @@
+#misc
+alias whereami=pwd
