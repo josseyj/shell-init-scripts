@@ -1,5 +1,6 @@
 function grinit() {
 	repoName=$1
+	userName=$(whoami)
 	if [ "$repoName" = "" ] 
 		then
 			echo "Usage: $0 <repo-name>";
@@ -25,7 +26,7 @@ function grinit() {
 			return 4223;
 	fi
 	
-	create_repo_response_raw=$(curl -s -w "HTTP_RESPONSE_STATUS_CODE=%{http_code}\n" -u "josseyj:$GITHUB_TOKEN" -X POST "$GITHUB_API_BASEPATH"/user/repos -d '{"name":"'$repoName'"}')
+	create_repo_response_raw=$(curl -s -w "HTTP_RESPONSE_STATUS_CODE=%{http_code}\n" -u "$userName:$GITHUB_TOKEN" -X POST "$GITHUB_API_BASEPATH"/user/repos -d '{"name":"'$repoName'"}')
 	if [ $? != 0 ] 
 		then
 			echo "Repo creation failed: $create_repo_response_raw"
@@ -46,5 +47,12 @@ function grinit() {
 
 	echo "INFO: Created the remote repo. Cloning $repo_clone_url"
  	git clone $repo_clone_url
+	if [ $? != 0 ] 
+		then
+			echo "Repo cloning failed."
+			return 5002;
+	fi
+
+	cd $repoName
 }
 
